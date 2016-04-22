@@ -31,6 +31,7 @@ ReadTimeout = 100;
 ExtraInput = Ignore;
 
 CMDDISP = '{"jsonrpc":"2.0","method":"com.attocube.ids.displacement.';
+CMDSYS  = '{"jsonrpc":"2.0","method":"com.attocube.ids.system.';
 CMDTAIL = '","id":1';
 RESPHEAD = '{"jsonrpc":"2.0","result":[';
 RESPTAIL = '],"id":1';
@@ -47,10 +48,16 @@ getAllPos2
     in  $RESPHEAD '%f' $RESPTAIL;
 }
 
-getf 
+getDisp_f 
 { 
     out $CMDDISP '\$1' $CMDTAIL;
     in  $RESPHEAD '%f' $RESPTAIL;
+}
+
+getSys_s 
+{ 
+    out $CMDSYS '\$1' $CMDTAIL;
+    in  $RESPHEAD '"%[a-z A-Z]"' $RESPTAIL;
 }
 
 getAllDisp 

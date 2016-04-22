@@ -57,14 +57,22 @@ record(asyn, "$(P)$(Q):ASYN") {
   field(PORT, "$(PORT)")
   field(OMAX, "1024")
   field(IMAX, "1024")
+  field(TSIZ, "128")
 }
 
 record(waveform, "$(P)$(Q):GETALLDISP") {
   field(DESC, "Get absolute positions")
   field(DTYP, "stream")
-  field(INP, "@ids3010.proto getf(getAxesDisplacement) $(PORT)")
+  field(INP, "@ids3010.proto getDisp_f(getAxesDisplacement) $(PORT)")
   field(NELM, "4")
   field(FTVL, "DOUBLE")
+}
+
+record(stringin, "$(P)$(Q):MODE:RBV") {
+  field(DESC, "Get current mode")
+  field(SCAN, "10 second")
+  field(DTYP, "stream")
+  field(INP, "@ids3010.proto getSys_s(getCurrentMode) $(PORT)")
 }
 
 #! Further lines contain data used by VisualDCT
@@ -91,5 +99,6 @@ record(waveform, "$(P)$(Q):GETALLDISP") {
 #! Record("$(P)$(Q):ABSPOS3:RBVS",4380,4280,0,0,"$(P)$(Q):ABSPOS3:RBVS")
 #! Field("$(P)$(Q):ABSPOS3:RBVS.INP",16777215,0,"$(P)$(Q):ABSPOS3:RBVS.INP")
 #! Link("$(P)$(Q):ABSPOS3:RBVS.INP","$(P)$(Q):GETALLPOS.VAL")
-#! Record("$(P)$(Q):ASYN",4100,3982,0,1,"$(P)$(Q):ASYN")
+#! Record("$(P)$(Q):ASYN",4100,3968,0,1,"$(P)$(Q):ASYN")
 #! Record("$(P)$(Q):GETALLDISP",4440,3674,0,0,"$(P)$(Q):GETALLDISP")
+#! Record("$(P)$(Q):MODE:RBV",4720,3768,0,1,"$(P)$(Q):MODE:RBV")
