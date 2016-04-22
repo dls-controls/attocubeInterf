@@ -1,3 +1,6 @@
 <?xml version="1.0" ?>
-<components arch="linux-x86">
+<components arch="linux-x86_64">
+	<asyn.AsynIP name="IPintr1" port="10.108.8.11:9090"/>
+	<attocubeInterf.ids3010 P="TS-TS-INTRF-01" PORT="IPintr1" Q="" name="INTR"/>
+	<asyn.auto_asynRecord ADDR="0" IMAX="1000" OMAX="1000" P="TS-TS-INTRF-01" PORT="IPintr1" R=":ASYN"/>
 </components>

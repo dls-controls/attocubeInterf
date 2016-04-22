@@ -1,0 +1,60 @@
+##########################################################################
+#
+# Protocol file for Attocube IDS3010 Interferometer
+#
+# The interferometer responds to JSON formatted commands on TCP port 9090
+#
+##########################################################################
+#
+# Example of getAbsolutePositions
+#  command:  {"jsonrpc": "2.0", "method": "com.attocube.ids.displacement.getAbsolutePositions", "id": 1}
+#  response: {"jsonrpc":"2.0","result":[1,0,100655314650,111730909560],"id":1}
+#
+# Example of getAxesDisplacement
+#  command:  {"jsonrpc":"2.0","method":"com.attocube.ids.displacement.getAxesDisplacement","id":1}
+#  response: {"jsonrpc":"2.0","result":[1,0,-14673553,3317430],"id":1}
+#
+# Example of getAbsolutePosition on second axis (NB the three axes are numbered 0..2 hence params = 1)
+#  command:  {"jsonrpc": "2.0","method":"com.attocube.ids.displacement.getAbsolutePosition","params":[1],"id":1}
+#  response: {"jsonrpc":"2.0","result":[0,100655314650],"id":1}
+#
+# Badly formatted commands result in an error response
+#  response: {"id":1,"jsonrpc":"2.0","error":{"code":-32099,"message":"org.freedesktop.DBus.Error.UnknownMethod"}}
+#
+
+Terminator = "}";
+Separator =",";
+
+LockTimeout = 3000;
+ReplyTimeout = 2000;
+ReadTimeout = 100;
+ExtraInput = Ignore;
+
+CMDDISP = '{"jsonrpc":"2.0","method":"com.attocube.ids.displacement.';
+CMDTAIL = '","id":1';
+RESPHEAD = '{"jsonrpc":"2.0","result":[';
+RESPTAIL = '],"id":1';
+
+getAllPos 
+{ 
+    out '{"jsonrpc":"2.0","method":"com.attocube.ids.displacement.getAbsolutePositions","id":1';
+    in  '{"jsonrpc":"2.0","result":[%f],"id":1'
+}
+
+getAllPos2 
+{ 
+    out $CMDDISP 'getAbsolutePositions' $CMDTAIL;
+    in  $RESPHEAD '%f' $RESPTAIL;
+}
+
+getf 
+{ 
+    out $CMDDISP '\$1' $CMDTAIL;
+    in  $RESPHEAD '%f' $RESPTAIL;
+}
+
+getAllDisp 
+{ 
+    out "{\"jsonrpc\":\"2.0\",\"method\":\"com.attocube.ids.displacement.getAxesDisplacement\",\"id\":1";
+    in  "{\"jsonrpc\":\"2.0\",\"result\":[%f],\"id\":1"
+}

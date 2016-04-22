@@ -11,7 +11,7 @@ include $(TOP)/configure/CONFIG
 # In a Diamond Support Module, install
 # templates like this
 #
-#DB += motor.template
+DB += ids3010.template
 #DB += basic_motor.template
 
 #----------------------------------------------------
