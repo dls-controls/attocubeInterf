@@ -8,14 +8,30 @@
 # % macro, P, Device prefix 1
 # % macro, Q, Device prefix 2
 # % macro, PORT, Asyn port name
-# % gui, $(name=), edm, ids3010.edl, P=$(P), Q=$(Q)
+# % macro, label1, Axis 1 name to display on GUI
+# % macro, label2, Axis 2 name to display on GUI
+# % macro, label3, Axis 3 name to display on GUI
+# % macro, PREC1, Precision axis 1 (default 0)
+# % macro, EGU1, Units axis 1 (default "")
+# % macro, SCALE1, Scale axis 1 (default 1)
+# % macro, OFF1, Offset axis 1 (default 0)
+# % macro, PREC2, Precision axis 2 (default 0)
+# % macro, EGU2, Units axis 2 (default "")
+# % macro, SCALE2, Scale axis 2 (default 2)
+# % macro, OFF2, Offset axis 2 (default 0)
+# % macro, PREC3, Precision axis 3 (default 0)
+# % macro, EGU3, Units axis 3 (default "")
+# % macro, SCALE3, Scale axis 3 (default 3)
+# % macro, OFF3, Offset axis 3 (default 0)
+# % gui, $(name=), edm, ids3010.edl, P=$(P), Q=$(Q), label1=$(label1), label2=$(label2), label3=$(label3)
 record(waveform, "$(P)$(Q):GETALLPOS") {
   field(DESC, "Get absolute positions")
   field(DTYP, "stream")
   field(FLNK, "$(P)$(Q):ABSPOS1:RBVS")
-  field(INP, "@ids3010.proto getAllPos2 $(PORT)")
+  field(INP, "@ids3010.proto getDisp_f(getAbsolutePositions) $(PORT)")
   field(NELM, "4")
   field(FTVL, "DOUBLE")
+  field(PINI, "YES")
 }
 
 record(subArray, "$(P)$(Q):ABSPOS1:RBVS") {
@@ -23,14 +39,13 @@ record(subArray, "$(P)$(Q):ABSPOS1:RBVS") {
   field(FLNK, "$(P)$(Q):ABSPOS2:RBVS")
   field(PREC, "0")
   field(FTVL, "DOUBLE")
-  field(INP, "$(P)$(Q):GETALLPOS")
+  field(INP, "$(P)$(Q):GETALLPOS NPP MS")
   field(MALM, "4")
   field(INDX, "1")
 }
 
 record(fanout, "$(P)$(Q):CLOCK") {
   field(SCAN, "1 second")
-  field(LNK1, "$(P)$(Q):GETALLPOS")
   field(LNK2, "$(P)$(Q):GETALLDISP")
 }
 
@@ -39,7 +54,7 @@ record(subArray, "$(P)$(Q):ABSPOS2:RBVS") {
   field(FLNK, "$(P)$(Q):ABSPOS3:RBVS")
   field(PREC, "0")
   field(FTVL, "DOUBLE")
-  field(INP, "$(P)$(Q):GETALLPOS")
+  field(INP, "$(P)$(Q):GETALLPOS NPP MS")
   field(MALM, "4")
   field(INDX, "2")
 }
@@ -48,7 +63,7 @@ record(subArray, "$(P)$(Q):ABSPOS3:RBVS") {
   field(DTYP, "Soft Channel")
   field(PREC, "0")
   field(FTVL, "DOUBLE")
-  field(INP, "$(P)$(Q):GETALLPOS")
+  field(INP, "$(P)$(Q):GETALLPOS NPP MS")
   field(MALM, "4")
   field(INDX, "3")
 }
@@ -66,39 +81,348 @@ record(waveform, "$(P)$(Q):GETALLDISP") {
   field(INP, "@ids3010.proto getDisp_f(getAxesDisplacement) $(PORT)")
   field(NELM, "4")
   field(FTVL, "DOUBLE")
+  field(FLNK, "$(P)$(Q):DISP:WARNING:RBV")
 }
 
-record(stringin, "$(P)$(Q):MODE:RBV") {
-  field(DESC, "Get current mode")
+record(subArray, "$(P)$(Q):DISP1:RBVS") {
+  field(DTYP, "Soft Channel")
+  field(FLNK, "$(P)$(Q):DISP2:RBVS")
+  field(FTVL, "DOUBLE")
+  field(INP, "$(P)$(Q):GETALLDISP NPP MS")
+  field(MALM, "4")
+  field(INDX, "1")
+}
+
+record(subArray, "$(P)$(Q):DISP2:RBVS") {
+  field(DTYP, "Soft Channel")
+  field(FLNK, "$(P)$(Q):DISP3:RBVS")
+  field(FTVL, "DOUBLE")
+  field(INP, "$(P)$(Q):GETALLDISP NPP MS")
+  field(MALM, "4")
+  field(INDX, "2")
+}
+
+record(subArray, "$(P)$(Q):DISP3:RBVS") {
+  field(DTYP, "Soft Channel")
+  field(FTVL, "DOUBLE")
+  field(INP, "$(P)$(Q):GETALLDISP NPP MS")
+  field(MALM, "4")
+  field(INDX, "3")
+  field(FLNK, "$(P)$(Q):POS1:RBV")
+}
+
+record(fanout, "$(P)$(Q):SLOWCLOCK") {
   field(SCAN, "10 second")
+  field(LNK1, "$(P)$(Q):GETALLPOS")
+  field(LNK2, "$(P)$(Q):MODE:STR:RBV")
+  field(LNK3, "$(P)$(Q):SYS:ERR:RBV")
+  field(LNK4, "$(P)$(Q):MODE:RBV")
+}
+
+record(calc, "$(P)$(Q):POS1:RBV") {
+  field(FLNK, "$(P)$(Q):POS2:RBV")
+  field(CALC, "(A+B)*C+D")
+  field(INPA, "$(P)$(Q):DISP1:RBVS NPP MS")
+  field(INPB, "$(P)$(Q):ABSPOS1:RBVS NPP MS")
+  field(PREC, "$(PREC1=0)")
+  field(EGU, "$(EGU1=)")
+  field(LOLO, "0")
+  field(LLSV, "MAJOR")
+  field(INPC, "$(SCALE1=1)")
+  field(INPD, "$(OFF1=0)")
+}
+
+record(calc, "$(P)$(Q):POS2:RBV") {
+  field(FLNK, "$(P)$(Q):POS3:RBV")
+  field(CALC, "(A+B)*C+D")
+  field(INPA, "$(P)$(Q):DISP2:RBVS NPP MS")
+  field(INPB, "$(P)$(Q):ABSPOS2:RBVS NPP MS")
+  field(PREC, "$(PREC2=0)")
+  field(EGU, "$(EGU2=)")
+  field(LOLO, "0")
+  field(LLSV, "MAJOR")
+  field(INPC, "$(SCALE2=1)")
+  field(INPD, "$(OFF2=0)")
+}
+
+record(calc, "$(P)$(Q):POS3:RBV") {
+  field(CALC, "(A+B)*C+D")
+  field(INPA, "$(P)$(Q):DISP3:RBVS NPP MS")
+  field(INPB, "$(P)$(Q):ABSPOS3:RBVS NPP MS")
+  field(PREC, "$(PREC3=0)")
+  field(EGU, "$(EGU3=)")
+  field(LOLO, "0")
+  field(LLSV, "MAJOR")
+  field(INPC, "$(SCALE3=1)")
+  field(INPD, "$(OFF3=0)")
+}
+
+record(stringout, "$(P)$(Q):CLR:ERR:STR") {
+  field(OMSL, "closed_loop")
+  field(OUT, "$(P)$(Q):ERR:MSG:RBV.VAL PP")
+  field(FLNK, "$(P)$(Q):CLR:FAN")
+}
+
+record(longout, "$(P)$(Q):CLR:ERR") {
+  field(FLNK, "$(P)$(Q):CLR:ERR:STR")
+  field(OUT, "$(P)$(Q):ERR:CODE:RBV.VAL PP")
+  field(DOL, "0")
+  field(OMSL, "closed_loop")
+  field(PINI, "YES")
+}
+
+record(dfanout, "$(P)$(Q):CLR:FAN") {
+  field(VAL, "1")
+  field(SELM, "All")
+  field(OUTA, "$(P)$(Q):ERR:CODE:RBV.PROC")
+  field(OUTB, "$(P)$(Q):ERR:MSG:RBV.PROC")
+}
+
+record(longin, "$(P)$(Q):SYS:ERR:RBV") {
+  field(DESC, "Get system error")
+  field(PINI, "YES")
+  field(DTYP, "stream")
+  field(INP, "@ids3010.proto getSys_d(getSystemError) $(PORT)")
+}
+
+record(subArray, "$(P)$(Q):DISP:WARNING:RBV") {
+  field(DTYP, "Soft Channel")
+  field(FLNK, "$(P)$(Q):DISP1:RBVS")
+  field(FTVL, "LONG")
+  field(INP, "$(P)$(Q):GETALLDISP NPP MS")
+  field(MALM, "4")
+  field(INDX, "0")
+}
+
+record(longin, "$(P)$(Q):ERR:CODE:RBV") {
+  field(SCAN, "I/O Intr")
+  field(DTYP, "stream")
+  field(INP, "@ids3010.proto getErrorCode $(PORT)")
+}
+
+record(stringin, "$(P)$(Q):ERR:MSG:RBV") {
+  field(SCAN, "I/O Intr")
+  field(DTYP, "stream")
+  field(INP, "@ids3010.proto getErrorMsg $(PORT)")
+}
+
+record(longout, "$(P)$(Q):RESET:AXES") {
+  field(DESC, "send reset axes disp cmd")
+  field(DTYP, "stream")
+  field(FLNK, "$(P)$(Q):GETALLPOS")
+  field(OUT, "@ids3010.proto setSysCmd(resetAxes) $(PORT)")
+}
+
+record(longout, "$(P)$(Q):START:MEASURE") {
+  field(DESC, "startMeasure command")
+  field(DTYP, "stream")
+  field(FLNK, "$(P)$(Q):MODE:STR:RBV")
+  field(OUT, "@ids3010.proto setSysCmd(startMeasure) $(PORT)")
+}
+
+record(longout, "$(P)$(Q):STOP:MEASURE") {
+  field(DESC, "stopMeasure command")
+  field(DTYP, "stream")
+  field(FLNK, "$(P)$(Q):MODE:STR:RBV")
+  field(OUT, "@ids3010.proto setSysCmd(stopMeasure) $(PORT)")
+}
+
+record(stringin, "$(P)$(Q):MODE:STR:RBV") {
+  field(DESC, "Get current mode")
   field(DTYP, "stream")
   field(INP, "@ids3010.proto getSys_s(getCurrentMode) $(PORT)")
+  field(PINI, "YES")
+}
+
+record(mbbi, "$(P)$(Q):MODE:RBV") {
+  field(PINI, "YES")
+  field(DTYP, "stream")
+  field(FLNK, "$(P)$(Q):CALC:MEASURE:RBV")
+  field(INP, "@ids3010.proto getSysMode $(PORT)")
+  field(ZRST, "Idle")
+  field(ONST, "Measure starting")
+  field(TWST, "Measuring")
+  field(THST, "Align Starting")
+  field(FRST, "Aligning")
+  field(FVST, "Pilot Laser")
+}
+
+record(ai, "$(P)$(Q):CONTRAST1:RBV") {
+  field(DESC, "Get axis 1 contrast")
+  field(DTYP, "stream")
+  field(INP, "@ids3010.proto getAdjContrast(0) $(PORT)")
+}
+
+record(ai, "$(P)$(Q):CONTRAST2:RBV") {
+  field(DESC, "Get axis 1 contrast")
+  field(DTYP, "stream")
+  field(INP, "@ids3010.proto getAdjContrast(1) $(PORT)")
+}
+
+record(ai, "$(P)$(Q):CONTRAST3:RBV") {
+  field(DESC, "Get axis 1 contrast")
+  field(DTYP, "stream")
+  field(INP, "@ids3010.proto getAdjContrast(2) $(PORT)")
+}
+
+record(bo, "$(P)$(Q):MEASURE:RBV") {
+  field(ZNAM, "Off")
+  field(ONAM, "On")
+}
+
+record(calcout, "$(P)$(Q):CALC:MEASURE:RBV") {
+  field(FLNK, "$(P)$(Q):MEASURE:RBV")
+  field(CALC, "A=2?1:0")
+  field(INPA, "$(P)$(Q):MODE:RBV")
+  field(OUT, "$(P)$(Q):MEASURE:RBV")
+  field(OOPT, "On Change")
+  field(DOPT, "Use CALC")
+}
+
+record(bo, "$(P)$(Q):MEASURE") {
+  field(DTYP, "stream")
+  field(OUT, "@ids3010.proto setSysMeasure $(PORT)")
+  field(DESC, "startMeasure command")
+  field(ZNAM, "Off")
+  field(ONAM, "On")
+  field(FLNK, "$(P)$(Q):MODE:STR:RBV")
 }
 
 #! Further lines contain data used by VisualDCT
-#! View(4000,3615,1.0)
-#! Record("$(P)$(Q):GETALLPOS",4100,3780,0,0,"$(P)$(Q):GETALLPOS")
+#! View(2992,2902,0.9)
+#! Record("$(P)$(Q):GETALLPOS",4100,3765,0,0,"$(P)$(Q):GETALLPOS")
 #! Field("$(P)$(Q):GETALLPOS.FLNK",16777215,1,"$(P)$(Q):GETALLPOS.FLNK")
 #! Link("$(P)$(Q):GETALLPOS.FLNK","$(P)$(Q):ABSPOS1:RBVS")
 #! Field("$(P)$(Q):GETALLPOS.VAL",16777215,1,"$(P)$(Q):GETALLPOS.VAL")
-#! Record("$(P)$(Q):ABSPOS1:RBVS",4420,3846,0,0,"$(P)$(Q):ABSPOS1:RBVS")
+#! Record("$(P)$(Q):ABSPOS1:RBVS",4420,3845,0,0,"$(P)$(Q):ABSPOS1:RBVS")
 #! Field("$(P)$(Q):ABSPOS1:RBVS.INP",16777215,0,"$(P)$(Q):ABSPOS1:RBVS.INP")
 #! Link("$(P)$(Q):ABSPOS1:RBVS.INP","$(P)$(Q):GETALLPOS.VAL")
 #! Field("$(P)$(Q):ABSPOS1:RBVS.FLNK",16777215,0,"$(P)$(Q):ABSPOS1:RBVS.FLNK")
 #! Link("$(P)$(Q):ABSPOS1:RBVS.FLNK","$(P)$(Q):ABSPOS2:RBVS")
-#! Record("$(P)$(Q):CLOCK",4120,3622,0,1,"$(P)$(Q):CLOCK")
-#! Field("$(P)$(Q):CLOCK.LNK1",16777215,0,"$(P)$(Q):CLOCK.LNK1")
-#! Link("$(P)$(Q):CLOCK.LNK1","$(P)$(Q):GETALLPOS")
-#! Field("$(P)$(Q):CLOCK.LNK2",16777215,1,"$(P)$(Q):CLOCK.LNK2")
+#! Field("$(P)$(Q):ABSPOS1:RBVS.VAL",16777215,1,"$(P)$(Q):ABSPOS1:RBVS.VAL")
+#! Record("$(P)$(Q):CLOCK",4500,3496,0,1,"$(P)$(Q):CLOCK")
+#! Field("$(P)$(Q):CLOCK.LNK2",16777215,0,"$(P)$(Q):CLOCK.LNK2")
 #! Link("$(P)$(Q):CLOCK.LNK2","$(P)$(Q):GETALLDISP")
-#! Record("$(P)$(Q):ABSPOS2:RBVS",4400,4066,0,0,"$(P)$(Q):ABSPOS2:RBVS")
+#! Record("$(P)$(Q):ABSPOS2:RBVS",4400,4125,0,0,"$(P)$(Q):ABSPOS2:RBVS")
 #! Field("$(P)$(Q):ABSPOS2:RBVS.INP",16777215,0,"$(P)$(Q):ABSPOS2:RBVS.INP")
 #! Link("$(P)$(Q):ABSPOS2:RBVS.INP","$(P)$(Q):GETALLPOS.VAL")
 #! Field("$(P)$(Q):ABSPOS2:RBVS.FLNK",16777215,0,"$(P)$(Q):ABSPOS2:RBVS.FLNK")
 #! Link("$(P)$(Q):ABSPOS2:RBVS.FLNK","$(P)$(Q):ABSPOS3:RBVS")
-#! Record("$(P)$(Q):ABSPOS3:RBVS",4380,4280,0,0,"$(P)$(Q):ABSPOS3:RBVS")
+#! Field("$(P)$(Q):ABSPOS2:RBVS.VAL",16777215,1,"$(P)$(Q):ABSPOS2:RBVS.VAL")
+#! Record("$(P)$(Q):ABSPOS3:RBVS",4380,4419,0,0,"$(P)$(Q):ABSPOS3:RBVS")
 #! Field("$(P)$(Q):ABSPOS3:RBVS.INP",16777215,0,"$(P)$(Q):ABSPOS3:RBVS.INP")
 #! Link("$(P)$(Q):ABSPOS3:RBVS.INP","$(P)$(Q):GETALLPOS.VAL")
-#! Record("$(P)$(Q):ASYN",4100,3968,0,1,"$(P)$(Q):ASYN")
-#! Record("$(P)$(Q):GETALLDISP",4440,3674,0,0,"$(P)$(Q):GETALLDISP")
-#! Record("$(P)$(Q):MODE:RBV",4720,3768,0,1,"$(P)$(Q):MODE:RBV")
+#! Field("$(P)$(Q):ABSPOS3:RBVS.VAL",16777215,1,"$(P)$(Q):ABSPOS3:RBVS.VAL")
+#! Record("$(P)$(Q):ASYN",4100,3987,0,1,"$(P)$(Q):ASYN")
+#! Record("$(P)$(Q):GETALLDISP",4480,3619,0,0,"$(P)$(Q):GETALLDISP")
+#! Field("$(P)$(Q):GETALLDISP.FLNK",16777215,1,"$(P)$(Q):GETALLDISP.FLNK")
+#! Link("$(P)$(Q):GETALLDISP.FLNK","$(P)$(Q):DISP:WARNING:RBV")
+#! Field("$(P)$(Q):GETALLDISP.VAL",16777215,1,"$(P)$(Q):GETALLDISP.VAL")
+#! Record("$(P)$(Q):DISP1:RBVS",4800,3839,0,0,"$(P)$(Q):DISP1:RBVS")
+#! Field("$(P)$(Q):DISP1:RBVS.INP",16777215,0,"$(P)$(Q):DISP1:RBVS.INP")
+#! Link("$(P)$(Q):DISP1:RBVS.INP","$(P)$(Q):GETALLDISP.VAL")
+#! Field("$(P)$(Q):DISP1:RBVS.VAL",16777215,1,"$(P)$(Q):DISP1:RBVS.VAL")
+#! Field("$(P)$(Q):DISP1:RBVS.FLNK",16777215,0,"$(P)$(Q):DISP1:RBVS.FLNK")
+#! Link("$(P)$(Q):DISP1:RBVS.FLNK","$(P)$(Q):DISP2:RBVS")
+#! Record("$(P)$(Q):DISP2:RBVS",4780,4099,0,0,"$(P)$(Q):DISP2:RBVS")
+#! Field("$(P)$(Q):DISP2:RBVS.INP",16777215,0,"$(P)$(Q):DISP2:RBVS.INP")
+#! Link("$(P)$(Q):DISP2:RBVS.INP","$(P)$(Q):GETALLDISP.VAL")
+#! Field("$(P)$(Q):DISP2:RBVS.VAL",16777215,1,"$(P)$(Q):DISP2:RBVS.VAL")
+#! Field("$(P)$(Q):DISP2:RBVS.FLNK",16777215,0,"$(P)$(Q):DISP2:RBVS.FLNK")
+#! Link("$(P)$(Q):DISP2:RBVS.FLNK","$(P)$(Q):DISP3:RBVS")
+#! Record("$(P)$(Q):DISP3:RBVS",4760,4379,0,0,"$(P)$(Q):DISP3:RBVS")
+#! Field("$(P)$(Q):DISP3:RBVS.FLNK",16777215,1,"$(P)$(Q):DISP3:RBVS.FLNK")
+#! Link("$(P)$(Q):DISP3:RBVS.FLNK","$(P)$(Q):POS1:RBV")
+#! Field("$(P)$(Q):DISP3:RBVS.INP",16777215,0,"$(P)$(Q):DISP3:RBVS.INP")
+#! Link("$(P)$(Q):DISP3:RBVS.INP","$(P)$(Q):GETALLDISP.VAL")
+#! Field("$(P)$(Q):DISP3:RBVS.VAL",16777215,1,"$(P)$(Q):DISP3:RBVS.VAL")
+#! Record("$(P)$(Q):SLOWCLOCK",4160,3534,0,1,"$(P)$(Q):SLOWCLOCK")
+#! Field("$(P)$(Q):SLOWCLOCK.LNK1",16777215,0,"$(P)$(Q):SLOWCLOCK.LNK1")
+#! Link("$(P)$(Q):SLOWCLOCK.LNK1","$(P)$(Q):GETALLPOS")
+#! Field("$(P)$(Q):SLOWCLOCK.LNK2",16777215,0,"$(P)$(Q):SLOWCLOCK.LNK2")
+#! Link("$(P)$(Q):SLOWCLOCK.LNK2","$(P)$(Q):MODE:STR:RBV")
+#! Field("$(P)$(Q):SLOWCLOCK.LNK3",16777215,0,"$(P)$(Q):SLOWCLOCK.LNK3")
+#! Link("$(P)$(Q):SLOWCLOCK.LNK3","$(P)$(Q):SYS:ERR:RBV")
+#! Field("$(P)$(Q):SLOWCLOCK.LNK4",16777215,0,"$(P)$(Q):SLOWCLOCK.LNK4")
+#! Link("$(P)$(Q):SLOWCLOCK.LNK4","$(P)$(Q):MODE:RBV")
+#! Record("$(P)$(Q):POS1:RBV",5080,3823,0,0,"$(P)$(Q):POS1:RBV")
+#! Field("$(P)$(Q):POS1:RBV.INPA",16777215,0,"$(P)$(Q):POS1:RBV.INPA")
+#! Link("$(P)$(Q):POS1:RBV.INPA","$(P)$(Q):DISP1:RBVS.VAL")
+#! Field("$(P)$(Q):POS1:RBV.INPB",16777215,0,"$(P)$(Q):POS1:RBV.INPB")
+#! Link("$(P)$(Q):POS1:RBV.INPB","$(P)$(Q):ABSPOS1:RBVS.VAL")
+#! Field("$(P)$(Q):POS1:RBV.FLNK",16777215,1,"$(P)$(Q):POS1:RBV.FLNK")
+#! Link("$(P)$(Q):POS1:RBV.FLNK","$(P)$(Q):POS2:RBV")
+#! Field("$(P)$(Q):POS1:RBV.INPC",16777215,1,"$(P)$(Q):POS1:RBV.INPC")
+#! Field("$(P)$(Q):POS1:RBV.INPD",16777215,1,"$(P)$(Q):POS1:RBV.INPD")
+#! Record("$(P)$(Q):POS2:RBV",5120,4123,0,1,"$(P)$(Q):POS2:RBV")
+#! Field("$(P)$(Q):POS2:RBV.INPA",16777215,0,"$(P)$(Q):POS2:RBV.INPA")
+#! Link("$(P)$(Q):POS2:RBV.INPA","$(P)$(Q):DISP2:RBVS.VAL")
+#! Field("$(P)$(Q):POS2:RBV.INPB",16777215,0,"$(P)$(Q):POS2:RBV.INPB")
+#! Link("$(P)$(Q):POS2:RBV.INPB","$(P)$(Q):ABSPOS2:RBVS.VAL")
+#! Field("$(P)$(Q):POS2:RBV.FLNK",16777215,1,"$(P)$(Q):POS2:RBV.FLNK")
+#! Link("$(P)$(Q):POS2:RBV.FLNK","$(P)$(Q):POS3:RBV")
+#! Field("$(P)$(Q):POS2:RBV.INPC",16777215,1,"$(P)$(Q):POS2:RBV.INPC")
+#! Field("$(P)$(Q):POS2:RBV.INPD",16777215,1,"$(P)$(Q):POS2:RBV.INPD")
+#! Record("$(P)$(Q):POS3:RBV",5180,4437,0,1,"$(P)$(Q):POS3:RBV")
+#! Field("$(P)$(Q):POS3:RBV.INPA",16777215,0,"$(P)$(Q):POS3:RBV.INPA")
+#! Link("$(P)$(Q):POS3:RBV.INPA","$(P)$(Q):DISP3:RBVS.VAL")
+#! Field("$(P)$(Q):POS3:RBV.INPB",16777215,0,"$(P)$(Q):POS3:RBV.INPB")
+#! Link("$(P)$(Q):POS3:RBV.INPB","$(P)$(Q):ABSPOS3:RBVS.VAL")
+#! Field("$(P)$(Q):POS3:RBV.INPC",16777215,1,"$(P)$(Q):POS3:RBV.INPC")
+#! Field("$(P)$(Q):POS3:RBV.INPD",16777215,1,"$(P)$(Q):POS3:RBV.INPD")
+#! Record("$(P)$(Q):CLR:ERR:STR",4720,3422,0,1,"$(P)$(Q):CLR:ERR:STR")
+#! Field("$(P)$(Q):CLR:ERR:STR.FLNK",16777215,1,"$(P)$(Q):CLR:ERR:STR.FLNK")
+#! Link("$(P)$(Q):CLR:ERR:STR.FLNK","$(P)$(Q):CLR:FAN")
+#! Field("$(P)$(Q):CLR:ERR:STR.OUT",16777215,1,"$(P)$(Q):CLR:ERR:STR.OUT")
+#! Link("$(P)$(Q):CLR:ERR:STR.OUT","$(P)$(Q):ERR:MSG:RBV.VAL")
+#! Record("$(P)$(Q):CLR:ERR",4660,3214,0,1,"$(P)$(Q):CLR:ERR")
+#! Field("$(P)$(Q):CLR:ERR.OUT",16777215,1,"$(P)$(Q):CLR:ERR.OUT")
+#! Link("$(P)$(Q):CLR:ERR.OUT","$(P)$(Q):ERR:CODE:RBV.VAL")
+#! Field("$(P)$(Q):CLR:ERR.FLNK",16777215,1,"$(P)$(Q):CLR:ERR.FLNK")
+#! Link("$(P)$(Q):CLR:ERR.FLNK","$(P)$(Q):CLR:ERR:STR")
+#! Record("$(P)$(Q):CLR:FAN",4980,3367,0,0,"$(P)$(Q):CLR:FAN")
+#! Field("$(P)$(Q):CLR:FAN.OUTA",16777215,1,"$(P)$(Q):CLR:FAN.OUTA")
+#! Link("$(P)$(Q):CLR:FAN.OUTA","$(P)$(Q):ERR:CODE:RBV.PROC")
+#! Field("$(P)$(Q):CLR:FAN.OUTB",16777215,1,"$(P)$(Q):CLR:FAN.OUTB")
+#! Link("$(P)$(Q):CLR:FAN.OUTB","$(P)$(Q):ERR:MSG:RBV.PROC")
+#! Record("$(P)$(Q):SYS:ERR:RBV",4060,4107,0,0,"$(P)$(Q):SYS:ERR:RBV")
+#! Record("$(P)$(Q):DISP:WARNING:RBV",4820,3639,0,0,"$(P)$(Q):DISP:WARNING:RBV")
+#! Field("$(P)$(Q):DISP:WARNING:RBV.INP",16777215,0,"$(P)$(Q):DISP:WARNING:RBV.INP")
+#! Link("$(P)$(Q):DISP:WARNING:RBV.INP","$(P)$(Q):GETALLDISP.VAL")
+#! Field("$(P)$(Q):DISP:WARNING:RBV.FLNK",16777215,0,"$(P)$(Q):DISP:WARNING:RBV.FLNK")
+#! Link("$(P)$(Q):DISP:WARNING:RBV.FLNK","$(P)$(Q):DISP1:RBVS")
+#! Record("$(P)$(Q):ERR:CODE:RBV",5260,3242,0,0,"$(P)$(Q):ERR:CODE:RBV")
+#! Field("$(P)$(Q):ERR:CODE:RBV.VAL",16777215,0,"$(P)$(Q):ERR:CODE:RBV.VAL")
+#! Field("$(P)$(Q):ERR:CODE:RBV.PROC",16777215,0,"$(P)$(Q):ERR:CODE:RBV.PROC")
+#! Record("$(P)$(Q):ERR:MSG:RBV",5260,3422,0,1,"$(P)$(Q):ERR:MSG:RBV")
+#! Field("$(P)$(Q):ERR:MSG:RBV.PROC",16777215,0,"$(P)$(Q):ERR:MSG:RBV.PROC")
+#! Field("$(P)$(Q):ERR:MSG:RBV.VAL",16777215,0,"$(P)$(Q):ERR:MSG:RBV.VAL")
+#! Record("$(P)$(Q):RESET:AXES",3820,3507,0,1,"$(P)$(Q):RESET:AXES")
+#! Field("$(P)$(Q):RESET:AXES.FLNK",16777215,1,"$(P)$(Q):RESET:AXES.FLNK")
+#! Link("$(P)$(Q):RESET:AXES.FLNK","$(P)$(Q):GETALLPOS")
+#! Record("$(P)$(Q):START:MEASURE",4200,3187,0,1,"$(P)$(Q):START:MEASURE")
+#! Field("$(P)$(Q):START:MEASURE.FLNK",16777215,0,"$(P)$(Q):START:MEASURE.FLNK")
+#! Link("$(P)$(Q):START:MEASURE.FLNK","$(P)$(Q):MODE:STR:RBV")
+#! Record("$(P)$(Q):STOP:MEASURE",3860,3187,0,1,"$(P)$(Q):STOP:MEASURE")
+#! Field("$(P)$(Q):STOP:MEASURE.FLNK",16777215,1,"$(P)$(Q):STOP:MEASURE.FLNK")
+#! Link("$(P)$(Q):STOP:MEASURE.FLNK","$(P)$(Q):MODE:STR:RBV")
+#! Record("$(P)$(Q):MODE:STR:RBV",4140,3387,0,0,"$(P)$(Q):MODE:STR:RBV")
+#! Record("$(P)$(Q):MODE:RBV",3820,3643,0,1,"$(P)$(Q):MODE:RBV")
+#! Field("$(P)$(Q):MODE:RBV.FLNK",16777215,0,"$(P)$(Q):MODE:RBV.FLNK")
+#! Link("$(P)$(Q):MODE:RBV.FLNK","$(P)$(Q):CALC:MEASURE:RBV")
+#! Field("$(P)$(Q):MODE:RBV.VAL",16777215,0,"$(P)$(Q):MODE:RBV.VAL")
+#! Record("$(P)$(Q):CONTRAST1:RBV",3780,3902,0,1,"$(P)$(Q):CONTRAST1:RBV")
+#! Record("$(P)$(Q):CONTRAST2:RBV",3780,4022,0,1,"$(P)$(Q):CONTRAST2:RBV")
+#! Record("$(P)$(Q):CONTRAST3:RBV",3760,4162,0,1,"$(P)$(Q):CONTRAST3:RBV")
+#! Record("$(P)$(Q):MEASURE:RBV",3600,3356,0,1,"$(P)$(Q):MEASURE:RBV")
+#! Field("$(P)$(Q):MEASURE:RBV.VAL",16777215,1,"$(P)$(Q):MEASURE:RBV.VAL")
+#! Record("$(P)$(Q):CALC:MEASURE:RBV",3540,3539,0,1,"$(P)$(Q):CALC:MEASURE:RBV")
+#! Field("$(P)$(Q):CALC:MEASURE:RBV.OUT",16777215,1,"$(P)$(Q):CALC:MEASURE:RBV.OUT")
+#! Link("$(P)$(Q):CALC:MEASURE:RBV.OUT","$(P)$(Q):MEASURE:RBV.VAL")
+#! Field("$(P)$(Q):CALC:MEASURE:RBV.FLNK",16777215,1,"$(P)$(Q):CALC:MEASURE:RBV.FLNK")
+#! Link("$(P)$(Q):CALC:MEASURE:RBV.FLNK","$(P)$(Q):MEASURE:RBV")
+#! Field("$(P)$(Q):CALC:MEASURE:RBV.INPA",16777215,1,"$(P)$(Q):CALC:MEASURE:RBV.INPA")
+#! Link("$(P)$(Q):CALC:MEASURE:RBV.INPA","$(P)$(Q):MODE:RBV.VAL")
+#! Record("$(P)$(Q):MEASURE",3880,3339,0,1,"$(P)$(Q):MEASURE")
+#! Field("$(P)$(Q):MEASURE.FLNK",16777215,1,"$(P)$(Q):MEASURE.FLNK")
+#! Link("$(P)$(Q):MEASURE.FLNK","$(P)$(Q):MODE:STR:RBV")

@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 711
-y 389
-w 300
-h 180
+x 236
+y 53
+w 270
+h 250
 font "arial-medium-r-12.0"
 ctlFont "arial-medium-r-12.0"
 btnFont "arial-medium-r-12.0"
@@ -24,135 +24,6 @@ snapToGrid
 gridSize 5
 endScreenProperties
 
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 6
-release 0
-x 100
-y 45
-w 70
-h 20
-controlPv "$(P)$(Q):ABSPOS1:RBVS"
-font "arial-bold-r-14.0"
-fgColor index 16
-fgAlarm
-bgColor index 10
-limitsFromDb
-nullColor index 14
-fastUpdate
-useHexPrefix
-newPos
-objType "monitors"
-noExecuteClipMask
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 40
-y 45
-w 60
-h 20
-font "arial-bold-r-14.0"
-fgColor index 14
-bgColor index 3
-useDisplayBg
-value {
-  "Axis 1"
-}
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 6
-release 0
-x 100
-y 105
-w 70
-h 20
-controlPv "$(P)$(Q):ABSPOS3:RBVS"
-font "arial-bold-r-14.0"
-fgColor index 16
-fgAlarm
-bgColor index 10
-limitsFromDb
-nullColor index 14
-fastUpdate
-useHexPrefix
-newPos
-objType "monitors"
-noExecuteClipMask
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 40
-y 105
-w 60
-h 20
-font "arial-bold-r-14.0"
-fgColor index 14
-bgColor index 3
-useDisplayBg
-value {
-  "Axis 3"
-}
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 6
-release 0
-x 100
-y 75
-w 70
-h 20
-controlPv "$(P)$(Q):ABSPOS2:RBVS"
-font "arial-bold-r-14.0"
-fgColor index 16
-fgAlarm
-bgColor index 10
-limitsFromDb
-nullColor index 14
-fastUpdate
-useHexPrefix
-newPos
-objType "monitors"
-noExecuteClipMask
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 40
-y 75
-w 60
-h 20
-font "arial-bold-r-14.0"
-fgColor index 14
-bgColor index 3
-useDisplayBg
-value {
-  "Axis 2"
-}
-endObjectProperties
-
 # (Rectangle)
 object activeRectangleClass
 beginObjectProperties
@@ -161,7 +32,7 @@ minor 0
 release 0
 x 0
 y 0
-w 300
+w 270
 h 35
 lineColor index 61
 fill
@@ -194,8 +65,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 190
-y 125
+x 180
+y 220
 w 80
 h 25
 fgColor index 46
@@ -207,29 +78,24 @@ font "arial-medium-r-18.0"
 3d
 endObjectProperties
 
-# (Related Display)
-object relatedDisplayClass
+# (Embedded Window)
+object activePipClass
 beginObjectProperties
 major 4
-minor 4
+minor 1
 release 0
-x 40
-y 140
-w 55
-h 25
-fgColor index 43
-bgColor index 3
+x 5
+y 35
+w 260
+h 180
+fgColor index 14
+bgColor index 10
 topShadowColor index 1
 botShadowColor index 11
-font "arial-bold-r-12.0"
-buttonLabel "Asyn"
-numPvs 4
-numDsps 1
-displayFileName {
-  0 "asynRecord.edl"
-}
-symbols {
-  0 "P=$(P)$(Q),R=:ASYN"
-}
+displaySource "file"
+file "ids3010-embed.edl"
+sizeOfs 5
+numDsps 0
+noScroll
 endObjectProperties
 
