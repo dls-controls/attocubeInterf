@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <components arch="linux-x86_64">
 	<asyn.AsynIP name="IPintr1" port="10.108.8.11:9090"/>
-	<attocubeInterf.ids3010 P="TS-TS-INTRF-01" PORT="IPintr1" Q="" label1="Z" label2="X" label3="Xref" name="INTR"/>
+	<attocubeInterf.ids3010 EGU1="um" EGU2="um" EGU3="um" P="TS-TS-INTRF-01" PORT="IPintr1" PREC1="3" PREC2="3" PREC3="3" Q="" SCALE1="0.000001" SCALE2="0.000001" SCALE3="0.000001" label1="Z" label2="X" label3="Xref" name="INTR"/>
 	<asyn.auto_asynRecord ADDR="0" IMAX="1000" OMAX="1000" P="TS-TS-INTRF-01" PORT="IPintr1" R=":ASYN"/>
 </components>

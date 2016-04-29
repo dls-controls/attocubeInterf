@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 510
-y 57
+x 512
+y 83
 w 505
 h 360
 font "arial-medium-r-12.0"
@@ -280,6 +280,7 @@ limitsFromDb
 nullColor index 14
 fastUpdate
 useHexPrefix
+showUnits
 newPos
 objType "monitors"
 noExecuteClipMask
@@ -304,6 +305,7 @@ limitsFromDb
 nullColor index 14
 fastUpdate
 useHexPrefix
+showUnits
 newPos
 objType "monitors"
 noExecuteClipMask
@@ -328,6 +330,7 @@ limitsFromDb
 nullColor index 14
 fastUpdate
 useHexPrefix
+showUnits
 newPos
 objType "monitors"
 noExecuteClipMask
