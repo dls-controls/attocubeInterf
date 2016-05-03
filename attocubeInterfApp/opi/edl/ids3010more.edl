@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 518
-y 161
+x 524
+y 239
 w 520
 h 380
 font "arial-medium-r-12.0"
@@ -563,8 +563,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 225
-y 235
+x 390
+y 265
 w 120
 h 20
 fgColor index 25
@@ -939,7 +939,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 130
+x 15
 y 255
 w 365
 h 35
@@ -950,6 +950,45 @@ useDisplayBg
 value {
   "NB Reset Axes will zero the displacement but will not update"
   "the absolute position. Stop and start Measure to recalibrate."
+}
+endObjectProperties
+
+# (Menu Button)
+object activeMenuButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 225
+y 235
+w 120
+h 20
+fgColor index 25
+fgAlarm
+bgColor index 3
+inconsistentColor index 3
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(P)$(Q):CLOCK.SCAN"
+font "arial-bold-r-14.0"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 140
+y 235
+w 80
+h 20
+font "arial-bold-r-14.0"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Update rate"
 }
 endObjectProperties
 
