@@ -3,9 +3,9 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 516
-y 135
-w 505
+x 518
+y 161
+w 520
 h 380
 font "arial-medium-r-12.0"
 ctlFont "arial-medium-r-12.0"
@@ -32,7 +32,7 @@ minor 0
 release 0
 x 5
 y 125
-w 495
+w 510
 h 165
 lineColor index 14
 fillColor index 3
@@ -46,7 +46,7 @@ minor 0
 release 0
 x 5
 y 45
-w 495
+w 510
 h 80
 lineColor index 14
 fillColor index 3
@@ -60,7 +60,7 @@ minor 0
 release 0
 x 5
 y 290
-w 495
+w 510
 h 55
 lineColor index 14
 fillColor index 3
@@ -267,7 +267,7 @@ beginObjectProperties
 major 4
 minor 6
 release 0
-x 350
+x 365
 y 160
 w 120
 h 20
@@ -292,7 +292,7 @@ beginObjectProperties
 major 4
 minor 6
 release 0
-x 350
+x 365
 y 210
 w 120
 h 20
@@ -317,7 +317,7 @@ beginObjectProperties
 major 4
 minor 6
 release 0
-x 350
+x 365
 y 185
 w 120
 h 20
@@ -363,7 +363,7 @@ beginObjectProperties
 major 4
 minor 6
 release 0
-x 415
+x 430
 y 235
 w 80
 h 20
@@ -387,7 +387,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 350
+x 365
 y 235
 w 60
 h 20
@@ -408,7 +408,7 @@ minor 6
 release 0
 x 185
 y 295
-w 250
+w 270
 h 20
 controlPv "$(P)$(Q):ERR:MSG:RBV"
 font "arial-bold-r-14.0"
@@ -454,7 +454,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 440
+x 460
 y 295
 w 50
 h 20
@@ -586,7 +586,7 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 475
+x 490
 y 160
 w 20
 h 20
@@ -603,7 +603,7 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 475
+x 490
 y 185
 w 20
 h 20
@@ -621,7 +621,7 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 475
+x 490
 y 210
 w 20
 h 20
@@ -640,15 +640,15 @@ major 4
 minor 1
 release 1
 x 100
-y 135
-w 85
+y 140
+w 105
 h 20
 font "arial-bold-r-14.0"
 fgColor index 14
 bgColor index 3
 useDisplayBg
 value {
-  "Absolute"
+  "Absolute(pm)"
 }
 endObjectProperties
 
@@ -659,15 +659,15 @@ major 4
 minor 1
 release 1
 x 225
-y 135
-w 110
+y 140
+w 135
 h 20
 font "arial-bold-r-14.0"
 fgColor index 14
 bgColor index 3
 useDisplayBg
 value {
-  "Displacement"
+  "Displacement(pm)"
 }
 endObjectProperties
 
@@ -677,8 +677,8 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 355
-y 135
+x 370
+y 140
 w 85
 h 20
 font "arial-bold-r-14.0"
