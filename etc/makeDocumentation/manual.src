@@ -10,9 +10,6 @@ You can also link to \ref thing.vdb "internally generated documentation" with al
 \section user_sec User Manual
 This section contains instructions for the end user
 
-\section build_sec Build Instructions 
-- \subpage build_instructions_example
-
 IOCs build using these build instructions are available in iocs/
 **/
 
