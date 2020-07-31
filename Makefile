@@ -25,4 +25,5 @@ DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard iocs))
 
 include $(TOP)/configure/RULES_TOP
 
-
+uninstall:
+	rm -rf ./data
