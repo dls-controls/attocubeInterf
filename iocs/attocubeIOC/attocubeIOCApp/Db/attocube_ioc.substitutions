@@ -1,0 +1,39 @@
+# Macros:
+#  P       Device prefix 1
+#  Q       Device prefix 2
+#  PORT    Asyn port name
+#  name    Object name
+#  PREC1   Precision axis 1 (default 0)
+#  SCAN    Measurement update rate (default 1 second)
+#  EGU1    Units axis 1 (default "")
+#  SCALE1  Scale axis 1 (default 1)
+#  OFF1    Offset axis 1 (default 0)
+#  PREC2   Precision axis 2 (default 0)
+#  EGU2    Units axis 2 (default "")
+#  SCALE2  Scale axis 2 (default 2)
+#  OFF2    Offset axis 2 (default 0)
+#  PREC3   Precision axis 3 (default 0)
+#  EGU3    Units axis 3 (default "")
+#  SCALE3  Scale axis 3 (default 3)
+#  OFF3    Offset axis 3 (default 0)
+#  label1  Axis 1 name to display on GUI
+#  label2  Axis 2 name to display on GUI
+#  label3  Axis 3 name to display on GUI
+file $(ATTOCUBEINTERF)/db/ids3010.template
+{
+pattern { P, Q, PORT, name, PREC1, SCAN, EGU1, SCALE1, OFF1, PREC2, EGU2, SCALE2, OFF2, PREC3, EGU3, SCALE3, OFF3, label1, label2, label3 }
+    { "TS-TS-INTRF-01", "", "IPintr1", "INTR", "3", "1 second", "um", "0.000001", "0", "3", "um", "0.000001", "0", "3", "um", "0.000001", "0", "Z", "X", "Xref" }
+}
+
+# Macros:
+#  P     Template argument
+#  R     Template argument
+#  PORT  Template argument
+#  ADDR  Template argument
+#  OMAX  Template argument
+#  IMAX  Template argument
+file $(ASYN)/db/asynRecord.db
+{
+pattern { P, R, PORT, ADDR, OMAX, IMAX }
+    { "TS-TS-INTRF-01", ":ASYN", "IPintr1", "0", "1000", "1000" }
+}
